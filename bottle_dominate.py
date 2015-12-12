@@ -5,14 +5,13 @@ import pdfkit
 import csv
 
 
-
 @route('/')
 def index():
     return index_page()
 
 
 def index_page():
-    '''Function for generating HTML page through Python code.'''
+    """Function for generating HTML page through Python code."""
     
     doc = dominate.document(title='Home page')
     with doc.head:
@@ -23,59 +22,63 @@ def index_page():
     with doc.body:
         with div(id='content', cls='panel panel-default'):
             with table(cls='table'):
-                with open('football.csv','r') as f:
+                with open('football.csv', 'r') as f:
                     data = [row for row in csv.reader(f.read().splitlines())]
-                with thead(color='green'):
+                with thead():
                     with tr():
                         for h in data[0]:
                             th(h)
-                with tbody(color='blue'):
-
+                with tbody():
                     for row in data[1:]:
                         with tr():
                             for tb in row:
                                 td(tb)
-        # button('Export to pdf',id='export_1',  cls='btn btn-default')
         input(type='button', id='btnSend', value='Export PDF', cls='btn btn-default')
 
     return doc.render()
     
 
 @route('/pdf', method='POST')
-def pdfit():
+def pdf_it():
     with open('football.csv','r') as f:
         data = [row for row in csv.reader(f.read().splitlines())]
         if request.method == 'POST':
             options = {'page-size':'A4'}
-            page = """<html><body>
-            <table style="width:100%">
-            <thead>
-            <tr>
-            """
-            h = ''
-            for i in data[0]:
-                h += "<td>%s</td>"%str(i)
-            page += (h + '</tr></thead>')
+            page = dominate.document()
+            with page.head:
+                style("td, th{text-align: left;}")
+                script(type='text/javascript', src='https://code.jquery.com/jquery-1.11.3.min.js')
+                script(
+                    """
+                    $(document).ready(function(){
+                      $('tr:even').css('background-color', '#c2c6b3');
+                      $('tr:odd').css('background-color', '#adb39b');
+                    });
 
-            tb = '<tbody>'
-            for row in data[1:]:
-                tb += '<tr>'
-                for t in row:
-                    tb += '<td>%s</td>'% str(t)
-                tb += '</tr></tbody>'
-            page += tb
-            page += '</body></html>'
-            print page
+                    """, type='text/javascript')
+            with page.body:
+                h1('Premier League Championship 2015')
+                with table(style="border:1px solid black; width:100%;", cellspacing="collapse"):
+                    with thead():
+                        with tr():
+                            for h in data[0]:
+                                th(h)
+                    with tbody():
+                        for row in data[1:]:
+                            with tr():
+                                for col in row:
+                                    td(col)
+            print page.render()
             pdfkit.from_string(str(page), 'export_1.pdf', options=options)
-            return  'OK'
+            return 'OK'
 
 
 @get('/<filename:re:.*\.js>')
 def javascripts(filename):
-    '''Function for setting path of javascript files.'''
+    """Function for setting path of javascript files.
+       :param filename: name of local .js file.
+    """
     return static_file(filename, root='static/js/')
-
-
 
 
 if __name__ == '__main__':

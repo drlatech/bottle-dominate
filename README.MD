@@ -12,3 +12,26 @@ Requirements:
 ```bash
 pip install bottle dominate pdfkit PyPDF xhtml2pdf geraldo reportlab
 ```
+
+### Small example of usual Web application for every Web Framework
+
+```python
+from dominate.tags import *
+from dominate import document
+from bottle import route, run
+
+@route('/')
+def index():
+    return index_page()
+
+def index_page():
+    doc = document('Home page')
+    with doc:
+        h1('Hello world!')
+
+    return doc.render()
+
+
+if __name__ == '__main__':
+    run(host='localhost', port='5000')
+```

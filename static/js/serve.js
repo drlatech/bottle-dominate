@@ -3,30 +3,33 @@ $().ready(function(){
          $.ajax({
              type: 'POST',
              url: '/pdf',
-             data: $('#export').html(),
-             dataType: 'text',
+             data: $('#export').get(0).outerHTML,//.html(),
+             dataType: 'html',
              success: function(ret){
                   if (ret == 'OK'){
 
-                    var notice = new PNotify({
+                    //var notice = new PNotify({
+                    $.pnotify({
                         title: 'Notification',
                         text: 'PDF is generated successfully!',
                         type: 'success',
-                        buttons: {
-                            closer: false,
-                            sticker: false
-                        }
+                        icon: 'ui-icon ui-icon-check'
+
                     });
-                    notice.get().click(function() {
-                        notice.remove();
-                    });
+                    //notice.get().click(function() {
+                    //    notice.remove();
+                    //});
                   }
                   else{
-                    new PNotify({
+                    //new PNotify({
+                    $.pnotify({
                                 title: 'Notification',
                                 text: 'Some error occurred during PDF generation!',
-                                type: 'error'
-                    });                  }
+                                type: 'error',
+                                icon: 'ui-icon ui-icon-check'
+
+                    });
+                  }
 
             } 
         }); 

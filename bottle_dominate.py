@@ -24,7 +24,10 @@ def invoice():
 def index_page():
     doc = dominate.document(title='Home Page')
     with doc.head:
+        # CSS
         link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+
+        # JS
         script(type='text/javascript', src='https://code.jquery.com/jquery-1.11.3.min.js')
         script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
     with doc.body:
@@ -41,14 +44,15 @@ def premier_page():
     
     doc = dominate.document(title='Premier League Table')
     with doc.head:
+        # JS <scripts></script>
         script(type='text/javascript', src='https://code.jquery.com/jquery-1.11.3.min.js')
-        link(rel='stylesheet', href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css')
-        script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js", type='text/javascript')
-        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
-        link(rel='stylesheet', href='pnotify.custom.min.css')
         script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
         script(type='text/javascript', src='pnotify.custom.min.js')
         script(type='text/javascript', src='serve.js')
+
+        # CSS <link>
+        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+        link(rel='stylesheet', href='pnotify.custom.min.css')
     with doc.body:
         h1('Premier League Championship 2015')
         with div(id='content', cls='panel panel-default'):
@@ -72,14 +76,16 @@ def premier_page():
 def invoice_page():
     doc = dominate.document(title='List of invoices')
     with doc.head:
+        # JS <scripts></script>
         script(type='text/javascript', src='https://code.jquery.com/jquery-1.11.3.min.js')
-        link(rel='stylesheet', href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css')
-        script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js", type='text/javascript')
-        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
-        link(rel='stylesheet', href='pnotify.custom.min.css')
         script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
         script(type='text/javascript', src='pnotify.custom.min.js')
         script(type='text/javascript', src='serve.js')
+
+        # CSS <link>
+        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+        link(rel='stylesheet', href='pnotify.custom.min.css')
+
     with doc.body:
         h1('Invoice List')
         with div(id='content', cls='panel panel-default'):
@@ -107,7 +113,10 @@ def pdf_it():
         options = {'page-size':'A4'}
         page = dominate.document()
         with page.head:
-            style("td, th{text-align: left;}")
+            # CSS
+            style("""td, th{text-align: left;}
+                     table{width: 100%;}""")
+            # JS
             script(type='text/javascript', src='https://code.jquery.com/jquery-1.11.3.min.js')
             script(
                 """
@@ -117,11 +126,11 @@ def pdf_it():
                 });
 
                 """, type='text/javascript')
-        with page.body:
-            h1('Premier League Championship 2015')
-            table(style="border:1px solid black; width:100%;", cellspacing="collapse").add_raw_string(data)
+        page.body.add(h1('Premier League Championship 2015'))
+        page.body.add_raw_string(data)
         name = 'export_' + str(time()) + '.pdf'
         page = page.render()
+        print page
         pdfkit.from_string(page, name, options=options)
         return 'OK'
 
@@ -140,14 +149,6 @@ def csss(filename):
        :param filename: name of local .css file.
     """
     return static_file(filename, root='static/css/')
-
-
-def make_html(block):
-    """
-
-    :param block: HTML block(div, table, ...)
-    :return: whole HTML
-    """
 
 
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ For those who finds it interesting and want try to involve, feel free to fork an
 Requirements:
 
 ```bash
-pip install bottle dominate pdfkit PyPDF xhtml2pdf geraldo reportlab
+pip install bottle dominate pdfkit PyPDF2 xhtml2pdf geraldo reportlab
 ```
 
 ### Small example of usual Web application for every Web Framework
@@ -18,20 +18,71 @@ pip install bottle dominate pdfkit PyPDF xhtml2pdf geraldo reportlab
 ```python
 from dominate.tags import *
 from dominate import document
-from bottle import route, run
+from bottle import get, post, request, run
 
-@route('/')
+@get('/')
+@post('/')
 def index():
-    return index_page()
+    """
+    Function for returning index page view (home page).
+    :return: html: str - generated html
+    """
+    if request.POST:
+        name = request.forms.get('name')
+        surname = request.forms.get('surname')
+        resp = """<h1>Welcome {} {}</h1>
+                  <br>
+                  <h1>Happy learning :)</h1>
+        """.format(name, surname)
+        return resp
+    else:
+        return index_page()
 
 def index_page():
-    doc = document('Home page')
-    with doc:
-        h1('Hello world!')
+    """Function for generating index HTML page
+       :return: HTML page
+    """
+    doc = base_page()
+    with doc.body:
+        h1('Bottle Dominate PDF Playground')
+        with div(style='margin-top:60px'):
+            # a('Football', cls='btn btn-default', href='/premier')
+            # a('Invoice', cls='btn btn-default', href='/invoice')
+
+            with form(method='POST', action='/'):
+                with div(id='fname'):
+                    label('First name')
+                    input(type='text', name='name')
+                with div(id='lname'):
+                    label('Last name')
+                    input(type='text', name='surname')
+                input(type='submit', cls= 'btn btn-info', value='Show full name')
 
     return doc.render()
 
 
+def base_page():
+    """
+    Basic template for all pages.
+    It includes all headers, styles, footer and other stuff.
+    It will be passed to other specific views which will add to DOM, things that every of these views show.
+    :return: object of <dominate.document> class
+    """
+    doc = dominate.document(title='Home Page')
+    with doc.head:
+        # CSS
+        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+
+        # JS
+        script(type='text/javascript', src='https://code.jquery.com/jquery-1.11.3.min.js')
+        script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
+    return doc
+
 if __name__ == '__main__':
     run(host='localhost', port='5000')
+```
+Save this as *app.py* and start it in terminal from path where script is located.
+
+```shell
+mint@linux~$ python app.py
 ```

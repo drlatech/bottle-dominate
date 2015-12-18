@@ -206,4 +206,4 @@ def csss(filename):
 
 
 if __name__ == '__main__':
-    run(host='localhost', port=4000, debug=True, reloader=True, server='diesel')
+    run(host='localhost', port=4000, debug=True, reloader=True, server='wsgiref')

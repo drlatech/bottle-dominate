@@ -30,11 +30,11 @@ def index():
     if request.POST:
         name = request.forms.get('name')
         surname = request.forms.get('surname')
-        resp = """<h1>Welcome {} {}</h1>
-                  <br>
-                  <h1>Happy learning :)</h1>
-        """.format(name, surname)
-        return resp
+        resp = dominate.document(title='POST DATA')
+        with resp.body:
+            h1('Welcome {} {}'.format(name, surname))
+            h1('Happy learning')
+        return resp.render()
     else:
         return index_page()
 
@@ -43,6 +43,7 @@ def index_page():
        :return: HTML page
     """
     doc = base_page()
+    doc.title = 'Home Page'
     with doc.body:
         h1('Bottle Dominate PDF Playground')
         with div(style='margin-top:60px'):
@@ -68,7 +69,7 @@ def base_page():
     It will be passed to other specific views which will add to DOM, things that every of these views show.
     :return: object of <dominate.document> class
     """
-    doc = dominate.document(title='Home Page')
+    doc = dominate.document()
     with doc.head:
         # CSS
         link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
@@ -86,3 +87,4 @@ Save this as *app.py* and start it in terminal from path where script is located
 ```shell
 mint@linux~$ python app.py
 ```
+After starting script, open this address on web browser: *localhost:5000* and play with it.
